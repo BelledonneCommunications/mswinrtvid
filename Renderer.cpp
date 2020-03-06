@@ -398,7 +398,7 @@ bool MSWinRTRenderer::D3D11Supported()
 	if (FAILED(hr)) {
 		return false;
 	}
-	if (FeatureLevel != D3D_FEATURE_LEVEL_11_1 && FeatureLevel != D3D_FEATURE_LEVEL_11_0) {
+	if (FeatureLevel != D3D_FEATURE_LEVEL_11_1 && FeatureLevel != D3D_FEATURE_LEVEL_11_0 && FeatureLevel != D3D_FEATURE_LEVEL_10_1) {
 		return false;
 	}
 	return true;
