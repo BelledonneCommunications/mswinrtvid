@@ -330,7 +330,7 @@ HRESULT MSWinRTRenderer::SetupDirectX()
 		return hr;
 	}
 	ComPtr<IMFMediaEngineClassFactory> factory;
-	hr = CoCreateInstance(CLSID_MFMediaEngineClassFactory, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&factory));
+	hr = CoCreateInstanceBT(CLSID_MFMediaEngineClassFactory, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&factory));
 	if (FAILED(hr)) {
 		ms_error("MSWinRTRenderer::SetupDirectX: CoCreateInstance failed %x", hr);
 		return hr;
