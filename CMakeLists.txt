@@ -92,7 +92,7 @@ set(SOURCE_FILES
 	"VideoBuffer.h"
 )
 apply_compile_flags(SOURCE_FILES "CPP")
-set(LIBS ${MEDIASTREAMER2_LIBRARIES} ${ORTP_LIBRARIES} ${BCTOOLBOX_LIBRARIES} mfplat.lib;mfuuid.lib)
+set(LIBS ${MEDIASTREAMER2_LIBRARIES} ${ORTP_LIBRARIES} ${BCTOOLBOX_LIBRARIES} mfplat.lib;mfuuid.lib;WindowsApp.lib)
 
 add_library(mswinrtvid MODULE ${SOURCE_FILES})
 set_target_properties(mswinrtvid PROPERTIES VERSION 0)
