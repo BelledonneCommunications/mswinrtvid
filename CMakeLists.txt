@@ -31,6 +31,7 @@ project(MSWINRTVID CXX)
 
 option(ENABLE_STRICT "Build with strict compile options." YES)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /ZW /EHsc")
 # We need to redefine _WIN32_WINNT to use Windows 10 Function
 add_compile_definitions(_WIN32_WINNT=0x0A00 _ALLOW_KEYWORD_MACROS)
 
