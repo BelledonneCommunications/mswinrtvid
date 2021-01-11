@@ -32,9 +32,11 @@ namespace MSWinRTVideo
 	public:
 		SwapChainPanelSource();
 		virtual ~SwapChainPanelSource();
-
+		
 		void Start(Windows::UI::Xaml::Controls::SwapChainPanel^ swapChainPanel);
 		void Stop();
+		static Object^ SwapChainPanelSource::Init(Object^ swapChainPanel);
+		static void SwapChainPanelSource::Stop(Object^ source);
 
 	private:
 		Windows::Foundation::IAsyncAction^ GetEvents();

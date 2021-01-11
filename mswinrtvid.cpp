@@ -243,10 +243,11 @@ static int ms_winrtdis_get_vsize(MSFilter *f, void *arg) {
 }
 
 static int ms_winrtdis_set_native_window_id(MSFilter *f, void *arg) {
+	ms_message("[MSWinRTDis] Setting Native Window ID");
 	MSWinRTDis *w = static_cast<MSWinRTDis *>(f->data);
 	Platform::String^ swapPanelName = ref new Platform::String((const wchar_t *)(*(PULONG_PTR)arg));
 	ms_message("SwapPanelBackground Name: %s", (const wchar_t *)((PULONG_PTR)arg));
-	Windows::UI::Xaml::Controls::MediaElement^ mediaElement = dynamic_cast<Windows::UI::Xaml::Controls::MediaElement^>(swapPanelName);
+	Windows::UI::Xaml::Controls::MediaElement^ mediaElement = dynamic_cast<Windows::UI::Xaml::Controls::MediaElement^>(swapPanelName);//??
 	w->setMediaElement(mediaElement);
 	return 0;
 }
@@ -337,6 +338,7 @@ static int ms_winrtbackgrounddis_get_vsize(MSFilter *f, void *arg) {
 }
 
 static int ms_winrtbackgrounddis_set_native_window_id(MSFilter *f, void *arg) {
+	ms_message("[MSWinRTBackgroundDis] Setting Native Window ID");
 	MSWinRTBackgroundDis *w = static_cast<MSWinRTBackgroundDis *>(f->data);
 	Platform::String^ swapPanelName = ref new Platform::String((const wchar_t *)(*(PULONG_PTR)arg));
 	ms_message("SwapPanelBackground Name: %s", (const wchar_t *)((PULONG_PTR)arg));

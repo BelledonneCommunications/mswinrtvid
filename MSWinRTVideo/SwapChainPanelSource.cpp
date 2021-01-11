@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <collection.h>
 #include <ppltasks.h>
 #include <Windows.ui.xaml.media.dxinterop.h>
+#include <Windows.Foundation.Collections.h>
 #include <crtdbg.h>
 
 #include "SwapChainPanelSource.h"
@@ -31,6 +32,7 @@ using namespace Platform;
 using namespace Windows::Foundation;
 using namespace Windows::UI::Core;
 using namespace MSWinRTVideo;
+using namespace Windows::Foundation::Collections;
 
 
 SwapChainPanelSource::SwapChainPanelSource()
@@ -132,6 +134,27 @@ void SwapChainPanelSource::Stop()
 		CloseHandle(mCurrentSwapChainHandle);
 		mCurrentSwapChainHandle = nullptr;
 	}
+}
+
+//IMap<System::Object^, System::Object^> gBuffer;
+
+Object^ SwapChainPanelSource::Init(Object^ swapChainPanel){
+    Windows::UI::Xaml::Controls::SwapChainPanel^ panel = dynamic_cast<Windows::UI::Xaml::Controls::SwapChainPanel^>(swapChainPanel);
+    SwapChainPanelSource^ source = ref new SwapChainPanelSource();
+    source->Start(panel);
+    return source;
+}
+/*
+void SwapChainPanelSource::Use(Object^ source){
+    int a = 2;
+    int b = 3;
+    ++a;
+    b = a;
+//    gBuffer.Insert(source, Init(source));
+}
+*/
+void SwapChainPanelSource::Stop(Object^ source){
+    dynamic_cast<SwapChainPanelSource^>(source)->Stop();
 }
 
 IAsyncAction^ SwapChainPanelSource::GetEvents()

@@ -27,13 +27,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="SchemeHandler.cpp" />
-    <ClCompile Include="SwapChainPanelSource.cpp" />
+    <ClCompile Include="@MSWINRTVIDEO_SOURCE_DIR@/SchemeHandler.cpp" />
+    <ClCompile Include="@MSWINRTVIDEO_SOURCE_DIR@/SwapChainPanelSource.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="SchemeHandler.h" />
-    <ClInclude Include="SharedData.h" />
-    <ClInclude Include="SwapChainPanelSource.h" />
+    <ClInclude Include="@MSWINRTVIDEO_SOURCE_DIR@/SchemeHandler.h" />
+    <ClInclude Include="@MSWINRTVIDEO_SOURCE_DIR@/SharedData.h" />
+    <ClInclude Include="@MSWINRTVIDEO_SOURCE_DIR@/SwapChainPanelSource.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{2d0e44c4-e51d-4911-b876-345d1e5e5209}</ProjectGuid>
@@ -47,12 +47,14 @@
     <ApplicationTypeRevision>10</ApplicationTypeRevision>
     <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformMinVersion>10.0.10240.0</WindowsTargetPlatformMinVersion>
+    <TargetFramework>UAP,Version=v10.0</TargetFramework>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)'=='Debug'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
+    <OutputPath>$(BaseOutputPath)\bin</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Release'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -71,7 +73,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <GenerateManifest>false</GenerateManifest>
-    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <OutDir>$(BaseOutputPath)\bin\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
     <ClCompile>
