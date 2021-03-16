@@ -89,13 +89,15 @@ set(SOURCE_FILES
 	"Renderer.h"
 	"ScopeLock.cpp"
 	"ScopeLock.h"
-	"SharedData.h"
+	"MSWinRTVideo/SharedData.h"
 	"VideoBuffer.h"
 )
+
 apply_compile_flags(SOURCE_FILES "CPP")
 set(LIBS ${MEDIASTREAMER2_LIBRARIES} ${ORTP_LIBRARIES} ${BCTOOLBOX_LIBRARIES} mfplat.lib;mfuuid.lib;WindowsApp.lib)
 
 add_library(mswinrtvid MODULE ${SOURCE_FILES})
+
 set_target_properties(mswinrtvid PROPERTIES VERSION 0)
 if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
 	install(FILES $<TARGET_PDB_FILE:mswinrtvid>
@@ -103,9 +105,12 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInf
 		PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
 	)
 endif()
+
 set_target_properties(mswinrtvid PROPERTIES PREFIX "lib")
 target_link_libraries(mswinrtvid ${LIBS})
 set_target_properties(mswinrtvid PROPERTIES VS_WINRT_COMPONENT TRUE)
+
+
 
 set(MS2_PLUGINS_DIR "${MEDIASTREAMER2_PLUGINS_LOCATION}")
 

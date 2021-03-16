@@ -49,7 +49,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "MediaEngineNotify.h"
 #include "MediaStreamSource.h"
 #include "RemoteHandle.h"
-#include "SharedData.h"
+#include "MSWinRTVideo/SharedData.h"
 
 
 namespace libmswinrtvid
