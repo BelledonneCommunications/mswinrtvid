@@ -1,6 +1,6 @@
 ############################################################################
 # CMakeLists.txt
-# Copyright (C) 2016  Belledonne Communications, Grenoble France
+# Copyright (C) 2016-2023  Belledonne Communications, Grenoble France
 #
 ############################################################################
 #
@@ -20,49 +20,24 @@
 #
 ############################################################################
 
-cmake_minimum_required(VERSION 3.12.4)
-
-set(CMAKE_CROSSCOMPILING "YES")
-set(CMAKE_SYSTEM_NAME "WindowsStore")
-set(CMAKE_SYSTEM_VERSION "10.0")
-set(CMAKE_VS_INCLUDE_INSTALL_TO_DEFAULT_BUILD "TRUE")
+cmake_minimum_required(VERSION 3.22)
 
 project(MSWINRTVID CXX)
 
 option(ENABLE_STRICT "Build with strict compile options." YES)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /ZW /EHsc")
-# We need to redefine _WIN32_WINNT to use Windows 10 Function
-add_compile_definitions(_WIN32_WINNT=0x0A00 _ALLOW_KEYWORD_MACROS)
-
-macro(apply_compile_flags SOURCE_FILES)
-	if(${SOURCE_FILES})
-		set(options "")
-		foreach(a ${ARGV})
-			if(STRICT_OPTIONS_${a})
-				string(REPLACE ";" " " options_${a} "${STRICT_OPTIONS_${a}}")
-				set(options "${options} ${options_${a}}")
-			endif()
-		endforeach()
-		if(options)
-			set_source_files_properties(${${SOURCE_FILES}} PROPERTIES COMPILE_FLAGS "${options}")
-		endif()
-	endif()
-endmacro()
-
-find_package(bctoolbox CONFIG REQUIRED)
-find_package(ortp CONFIG REQUIRED)
-find_package(Mediastreamer2 CONFIG REQUIRED)
-
-include_directories(
-	${MEDIASTREAMER2_INCLUDE_DIRS}
-	${ORTP_INCLUDE_DIRS}
-	${BCTOOLBOX_INCLUDE_DIRS}
-)
-
-set(STRICT_OPTIONS_CPP )
-if(ENABLE_STRICT)
-	list(APPEND STRICT_OPTIONS_CPP "/WX")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+find_package(BcToolbox)
+if(NOT BCTOOLBOX_FOUND)
+	find_package(bctoolbox CONFIG REQUIRED)
+endif()
+find_package(Ortp)
+if(NOT ORTP_FOUND)
+	find_package(ortp CONFIG REQUIRED)
+endif()
+find_package(Mediastreamer2)
+if(NOT MEDIASTREAMER2_FOUND)
+	find_package(Mediastreamer2 CONFIG REQUIRED)
 endif()
 
 set(SOURCE_FILES
@@ -93,12 +68,26 @@ set(SOURCE_FILES
 	"VideoBuffer.h"
 )
 
-apply_compile_flags(SOURCE_FILES "CPP")
-set(LIBS ${MEDIASTREAMER2_LIBRARIES} ${ORTP_LIBRARIES} ${BCTOOLBOX_LIBRARIES} mfplat.lib;mfuuid.lib;WindowsApp.lib)
+set(LIBS ${MEDIASTREAMER2_LIBRARIES} ${ORTP_LIBRARIES} ${BCTOOLBOX_LIBRARIES} mfplat.lib mfuuid.lib WindowsApp.lib)
 
 add_library(mswinrtvid MODULE ${SOURCE_FILES})
-
 set_target_properties(mswinrtvid PROPERTIES VERSION 0)
+set_target_properties(mswinrtvid PROPERTIES PREFIX "lib")
+target_include_directories(mswinrtvid PRIVATE
+	${MEDIASTREAMER2_INCLUDE_DIRS}
+	${ORTP_INCLUDE_DIRS}
+	${BCTOOLBOX_INCLUDE_DIRS}
+)
+target_link_libraries(mswinrtvid ${LIBS})
+target_compile_definitions(mswinrtvid PRIVATE "_WIN32_WINNT=0x0A00" "_ALLOW_KEYWORD_MACROS")
+if(MSVC)
+	set_target_properties(mswinrtvid PROPERTIES VS_WINRT_COMPONENT TRUE)
+else()
+	target_compile_options(mswinrtvid PRIVATE -ZW -EHsc)
+endif()
+if(ENABLE_STRICT)
+	target_compile_options(mswinrtvid PRIVATE -WX)
+endif()
 if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
 	install(FILES $<TARGET_PDB_FILE:mswinrtvid>
 		DESTINATION lib/mediastreamer/plugins
@@ -106,10 +95,8 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInf
 	)
 endif()
 
-set_target_properties(mswinrtvid PROPERTIES PREFIX "lib")
-target_link_libraries(mswinrtvid ${LIBS})
-set_target_properties(mswinrtvid PROPERTIES VS_WINRT_COMPONENT TRUE)
 
+add_subdirectory("MSWinRTVideo")
 
 
 set(MS2_PLUGINS_DIR "${MEDIASTREAMER2_PLUGINS_LOCATION}")

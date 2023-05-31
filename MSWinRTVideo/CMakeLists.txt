@@ -1,6 +1,6 @@
 ############################################################################
-# GenerateSDK.cmake
-# Copyright (C) 2010-2020 Belledonne Communications, Grenoble France
+# CMakeLists.txt
+# Copyright (C) 2010-2023 Belledonne Communications, Grenoble France
 #
 ############################################################################
 #
@@ -20,21 +20,39 @@
 #
 ############################################################################
 
-cmake_minimum_required(VERSION 3.2)
+include(GNUInstallDirs)
 
-project(mswinrtvideo-wrapper)
-set(MSWINRTVIDEO_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-#file(COPY ${CMAKE_INSTALL_PREFIX}/share/linphonecs/LinphoneWrapper.cs DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-#file(COPY ${LINPHONESDK_DIR}/cmake/Windows/wrapper/CsUwpWrapper.csproj DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-#file(COPY ${LINPHONESDK_DIR}/cmake/Windows/wrapper/Properties DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-#file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/MSWinRTVideo.vcxproj DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/MSWinRTVideo.vcxproj.in ${CMAKE_CURRENT_BINARY_DIR}/MSWinRTVideo.vcxproj @ONLY)
+set(SOURCE_FILES
+	"SchemeHandler.cpp"
+	"SwapChainPanelSource.cpp"
+	"SchemeHandler.h"
+	"SharedData.h"
+	"SwapChainPanelSource.h"
+)
 
-message("INSTALLATION mswinrtvideo: ${CMAKE_INSTALL_PREFIX}")
-message("LINPHONE_PLATFORM mswinrtvideo: ${LINPHONE_PLATFORM}")
-message("CMAKE_CURRENT_BINARY_DIR mswinrtvideo: ${CMAKE_CURRENT_BINARY_DIR}")
+set(LIBS mfplat.lib mfuuid.lib WindowsApp.lib)
 
-execute_process(
-	COMMAND "msbuild" "-t:restore" "MSWinRTVideo.vcxproj"
-	COMMAND "msbuild" "MSWinRTVideo.vcxproj" "/p:BaseOutputPath=${CMAKE_INSTALL_PREFIX}" "/p:MDILCompile=true" "/t:build" "/p:Configuration=Release" "/p:Platform=${LINPHONE_PLATFORM}"
+add_library(MSWinRTVideo ${SOURCE_FILES})
+target_link_libraries(MSWinRTVideo ${LIBS})
+if(MSVC)
+	set_target_properties(MSWinRTVideo PROPERTIES VS_WINRT_COMPONENT TRUE)
+else()
+	target_compile_options(MSWinRTVideo PRIVATE -ZW -EHsc)
+endif()
+if(ENABLE_STRICT)
+	target_compile_options(MSWinRTVideo PRIVATE -WX)
+endif()
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+	install(FILES $<TARGET_PDB_FILE:MSWinRTVideo>
+		DESTINATION ${CMAKE_INSTALL_BINDIR}
+		PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+	)
+endif()
+
+install(TARGETS MSWinRTVideo
+	RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+	PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
 )
