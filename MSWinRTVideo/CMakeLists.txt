@@ -30,10 +30,8 @@ set(SOURCE_FILES
 	"SwapChainPanelSource.h"
 )
 
-set(LIBS mfplat.lib mfuuid.lib WindowsApp.lib)
-
 add_library(MSWinRTVideo ${SOURCE_FILES})
-target_link_libraries(MSWinRTVideo ${LIBS})
+target_link_libraries(MSWinRTVideo PRIVATE mfplat.lib mfuuid.lib WindowsApp.lib)
 if(MSVC)
 	set_target_properties(MSWinRTVideo PROPERTIES VS_WINRT_COMPONENT TRUE)
 else()

@@ -28,19 +28,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/mediastreamer2/plugi
 
 option(ENABLE_STRICT "Build with strict compile options." YES)
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-find_package(BcToolbox)
-if(NOT BCTOOLBOX_FOUND)
-	find_package(bctoolbox CONFIG REQUIRED)
-endif()
-find_package(Ortp)
-if(NOT ORTP_FOUND)
-	find_package(ortp CONFIG REQUIRED)
-endif()
-find_package(Mediastreamer2)
-if(NOT MEDIASTREAMER2_FOUND)
-	find_package(Mediastreamer2 CONFIG REQUIRED)
-endif()
+find_package(Mediastreamer2 5.3.0 REQUIRED)
 
 set(SOURCE_FILES
 	"IVideoDispatcher.h"
@@ -70,17 +58,10 @@ set(SOURCE_FILES
 	"VideoBuffer.h"
 )
 
-set(LIBS ${MEDIASTREAMER2_LIBRARIES} ${ORTP_LIBRARIES} ${BCTOOLBOX_LIBRARIES} mfplat.lib mfuuid.lib WindowsApp.lib)
-
 add_library(mswinrtvid MODULE ${SOURCE_FILES})
 set_target_properties(mswinrtvid PROPERTIES VERSION 0)
 set_target_properties(mswinrtvid PROPERTIES PREFIX "lib")
-target_include_directories(mswinrtvid PRIVATE
-	${MEDIASTREAMER2_INCLUDE_DIRS}
-	${ORTP_INCLUDE_DIRS}
-	${BCTOOLBOX_INCLUDE_DIRS}
-)
-target_link_libraries(mswinrtvid ${LIBS})
+target_link_libraries(mswinrtvid PRIVATE ${Mediastreamer2_TARGET} mfplat.lib mfuuid.lib WindowsApp.lib)
 target_compile_definitions(mswinrtvid PRIVATE "_WIN32_WINNT=0x0A00" "_ALLOW_KEYWORD_MACROS")
 if(MSVC)
 	set_target_properties(mswinrtvid PROPERTIES VS_WINRT_COMPONENT TRUE)
@@ -97,15 +78,11 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInf
 	)
 endif()
 
-
 add_subdirectory("MSWinRTVideo")
 
-
-set(MS2_PLUGINS_DIR "${MEDIASTREAMER2_PLUGINS_LOCATION}")
-
 install(TARGETS mswinrtvid
-	RUNTIME DESTINATION "${MS2_PLUGINS_DIR}"
-	LIBRARY DESTINATION "${MS2_PLUGINS_DIR}"
-	ARCHIVE DESTINATION "${MS2_PLUGINS_DIR}"
+	RUNTIME DESTINATION "${Mediastreamer2_PLUGINS_DIR}"
+	LIBRARY DESTINATION "${Mediastreamer2_PLUGINS_DIR}"
+	ARCHIVE DESTINATION "${Mediastreamer2_PLUGINS_DIR}"
 	PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
 )
